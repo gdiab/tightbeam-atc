@@ -95,7 +95,17 @@ await vm.runInContext(`
     'layer rebuild cannot restore annotations while annotations are off');
   assert.equal(JSON.stringify({tags, arrows}), original, 'local annotation toggle preserves data');
 
+  layerState.arrows = false;
+  layerState.annotations = false;
   setAnnotationsVisible(true);
+  assert.deepEqual(
+    {agentTag:agentTag.visible, itemTag:itemTag.visible, arrow:arrowGroup.visible},
+    {agentTag:false, itemTag:false, arrow:false},
+    'annotations on does not bypass independent local layer gates');
+  assert.equal(JSON.stringify({tags, arrows}), original, 'local layer gates preserve annotation data');
+
+  layerState.arrows = true;
+  layerState.annotations = true;
   setNamesVisible(true);
   pullQueue.push({generation:'fixture-g1', seq:1, gap:false, commands:[],
     tagsRev:1, tags:fixtureTags, arrowsRev:1, arrows:fixtureArrows,

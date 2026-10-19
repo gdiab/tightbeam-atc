@@ -575,11 +575,8 @@ function setNamesVisible(on){
 }
 function setAnnotationsVisible(on){
   view.annotationsVisible = on;
-  /* Keep hidden annotations out of hit-testing immediately, before the next frame. */
-  arrowGroup.visible = on;
-  selectables().forEach(m => (m.userData.tagSprites || []).forEach(sp => {
-    sp.visible = on && (m.userData.dim ?? 1) > .9;
-  }));
+  /* Apply immediately without bypassing the independent local layer gates. */
+  applyLayerVisibility();
 }
 function focusMesh(){
   if (!view.focus.key) return null;
