@@ -570,6 +570,7 @@ function assertFocusInvariant(){
 const agentLabel = a => view.namesVisible ? a.name : '';
 function setNamesVisible(on){
   view.namesVisible = on;
+  applyLayerVisibility();        /* existing labels must follow local and pulled state */
   renderDetail();                /* an open detail pane must not show stale text */
 }
 function setAnnotationsVisible(on){
@@ -3653,7 +3654,7 @@ function nodeLayerOn(m){
    independently when the body they annotate is off. Visibility and picking
    therefore share nodeLayerOn() instead of hiding a whole parent group. */
 function applyLayerVisibility(){
-  arrowGroup.visible = layerState.arrows;
+  arrowGroup.visible = layerState.arrows && view.annotationsVisible;
   tetherGroup.visible = layerState.obligations;
   linkGroup.visible = layerState.agentGraph;
   groundGroup.children.forEach(o => {
