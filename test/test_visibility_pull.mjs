@@ -28,6 +28,7 @@ function extractFn(name){
 }
 
 const source = [
+  extractFn('showsPersistentAgentLabel'),
   extractFn('setNamesVisible'),
   extractFn('setAnnotationsVisible'),
   extractFn('applyLayerVisibility'),
@@ -78,6 +79,13 @@ await vm.runInContext(`
   const fixtureArrows = [{arrowId:'arrow-1', from:'s_fixture', to:'wi_fixture'}];
   const original = JSON.stringify({tags:fixtureTags, arrows:fixtureArrows});
   tags = fixtureTags.slice(); arrows = fixtureArrows.slice();
+
+  assert.equal(showsPersistentAgentLabel({kind:'pdo', retired:false}), true,
+    'active PDOs receive persistent name labels');
+  assert.equal(showsPersistentAgentLabel({kind:'agent', retired:false}), false,
+    'other agent kinds keep existing tooltip-only behavior');
+  assert.equal(showsPersistentAgentLabel({kind:'pdo', retired:true}), false,
+    'retired PDOs keep existing no-label behavior');
 
   setNamesVisible(false);
   assert.equal(agentLabel.visible, false, 'local names off hides an existing label');
