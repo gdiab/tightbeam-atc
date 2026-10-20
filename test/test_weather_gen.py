@@ -319,6 +319,32 @@ class WeatherGeneratorEvidenceTest(unittest.TestCase):
 
 
 class WeatherGeneratorEngagedTest(unittest.TestCase):
+    def test_pdo_archetype_has_distinct_kind(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            self._make_state_db(base / "state.db")
+            con = sqlite3.connect(base / "state.db")
+            con.execute(
+                "INSERT INTO sessions VALUES (?, ?, ?, ?, ?, ?, ?)",
+                ("agent:main:test:pdo s_pdo", "PDO — delivery", "active", None,
+                 "pdo", "codex", "test"),
+            )
+            con.commit()
+            con.close()
+
+            output = base / "weather.json"
+            env = os.environ.copy()
+            env.update({"TB_BASE_DIR": str(base), "TB_WEATHER_OUT": str(output)})
+            env.pop("TB_WEATHER_DEST", None)
+            env.pop("TB_WEATHER_REPO", None)
+
+            subprocess.run(["python3", str(GENERATOR)], env=env, check=True,
+                           capture_output=True, text=True)
+            agents = {a["id"]: a for a in json.loads(output.read_text())["agents"]}
+
+            self.assertEqual("pdo", agents["s_pdo"]["kind"])
+            self.assertEqual("pdo", agents["s_pdo"]["archetype"])
+
     def test_engaged_flag_matches_open_assignment_or_pending_wake(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)

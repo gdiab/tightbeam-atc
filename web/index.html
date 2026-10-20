@@ -679,6 +679,9 @@ function labelSprite(text){
   const h = 1.35; sp.scale.set(h*c.width/c.height, h, 1);
   return sp;
 }
+function showsPersistentAgentLabel(a){
+  return !a.retired && ['main','po','pdo','patrol','orch'].includes(a.kind);
+}
 /* a tag: short text pinned above a node, coloured by who wrote it */
 /* Provenance is drawn, not typed: an emoji would arrive in its own colours and
    fight the tag's. A bust for a person, a hexagon for an agent — the hexagon
@@ -1610,7 +1613,7 @@ function buildGround(agents){
     m.userData.baseStroke.copy(m.userData.lineMat.color);   /* ghosting shades from here */
     /* label the named layer — Main, owners, patrols, orchestrators;
        the leaf-worker crowd stays tooltip-only */
-    if (!a.retired && ['main','po','patrol','orch'].includes(a.kind)){
+    if (showsPersistentAgentLabel(a)){
       const sp = labelSprite(a.name.length>28 ? a.name.slice(0,27)+'…' : a.name);
       sp.position.set(0, 1.15, 0); sp.visible = view.namesVisible;
       m.add(sp);

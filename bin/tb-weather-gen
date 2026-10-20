@@ -64,6 +64,7 @@ def kind_of(archetype, roles):
         return "main"
     return {
         "product-owner": "po",
+        "pdo": "pdo",
         "orchestrator": "orch",
         "coder": "coder",
         "reviewer": "rev",
